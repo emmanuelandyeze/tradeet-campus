@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "tradeet-campus",
+    "name": "Tradeet Campus",
     "slug": "tradeet-campus",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.tradeet.student"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "ba224fee-28fb-4213-a68a-eefbb51d5cd9"
+      }
     }
   }
 }
