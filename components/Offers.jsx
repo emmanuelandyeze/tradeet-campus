@@ -18,19 +18,19 @@ const OfferCard = ({
 	return (
 		<TouchableOpacity
 			onPress={onPress}
-			style={{ width: Dimensions.get('window').width }}
+			style={{ width: Dimensions.get('window').width + 2, marginHorizontal: 'auto', borderRadius: 15 }}
 		>
 			<View
-				style={{ borderRadius: 10, elevation: 5 }}
-				className="bg-yellow-300 rounded-lg mb-4 shadow-md"
+				// style={{ borderRadius: 15, elevation: 5 }}
+				className="bg-white mb-4 shadow-sm rounded-lg"
 			>
 				<Image
 					source={{ uri: imageUrl }}
 					style={{
-						width: '100%',
-						height: 150,
+						width: '92%',
+						height: 180,
 						resizeMode: 'cover',
-						borderRadius: 10,
+						borderRadius: 15,
 						elevation: 5
 					}}
 				/>
@@ -52,7 +52,7 @@ export default function OffersSection({ offers }) {
 			setActiveIndex(
 				(prevIndex) => (prevIndex + 1) % offers.length,
 			);
-		}, 3000); // Change image every 3 seconds
+		}, 4000); // Change image every 3 seconds
 
 		return () => clearInterval(intervalId); // Cleanup on component unmount
 	}, [offers.length]);

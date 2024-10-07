@@ -14,6 +14,7 @@ import EventsSection from '@/components/Events';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { StatusBar } from 'expo-status-bar';
 
 export default function HomeScreen() {
   const router = useRouter()
@@ -90,7 +91,7 @@ export default function HomeScreen() {
 			title: '10% off food orders!',
 			details: 'Valid until October 15th',
 			imageUrl:
-				'https://res.cloudinary.com/dkhoomk9a/image/upload/v1727092172/legacy-atelier/file_1727092167373.png',
+				'https://res.cloudinary.com/dkhoomk9a/image/upload/v1727253595/legacy-atelier/file_1727253595723.jpg',
 		},
 	];
   
@@ -105,16 +106,7 @@ export default function HomeScreen() {
 			onRegister: () =>
 				console.log('Registering for Tech Conference 2024'),
 		},
-		// {
-		// 	id: 2,
-		// 	name: 'Music Fest 2024',
-		// 	image:
-		// 		'https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F844832829%2F1778614907043%2F1%2Foriginal.20240908-181621?auto=format%2Ccompress&q=75&sharp=10&s=d1ca923e59b32b3b22b381b854d5d851',
-		// 	location: 'Abuja, Nigeria',
-		// 	time: 'November 12, 2024, 5:00 PM',
-		// 	onRegister: () =>
-		// 		console.log('Buying ticket for Music Fest 2024'),
-		// },
+		
 		{
 			id: 3,
 			name: 'Startup Pitch Event',
@@ -128,10 +120,13 @@ export default function HomeScreen() {
 	];
 
 
-	// require('../assets/splash1.png');
-
 	return (
-		<View className="flex-1 w-full bg-gray-100">
+		<View className="flex-1 w-full bg-white">
+			<StatusBar
+				backgroundColor="#fff"
+				style="dark"
+				translucent={true}
+			/>
 			{/* Header */}
 			<View
 			// className="pt-10 pb-10 px-4 flex justify-between flex-row items-start bg-red-200"
@@ -151,11 +146,10 @@ export default function HomeScreen() {
 				<ServicesSection services={services} />
 
 				{/* Events Section  */}
-				<EventsSection events={events} />
+				{/* <EventsSection events={events} /> */}
 			</ScrollView>
 
 			<TouchableOpacity
-				
 				style={{
 					backgroundColor: '#101010',
 					width: 50,

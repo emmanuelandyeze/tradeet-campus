@@ -23,8 +23,12 @@ export default function StoreScreen() {
 	const [selectedProduct, setSelectedProduct] =
 		useState(null);
 	const [quantity, setQuantity] = useState(1);
-	const [selectedVariant, setSelectedVariant] =
-		useState(null);
+	const [selectedVariant, setSelectedVariant] = useState(
+		[],
+	);
+	const [selectedVariants, setSelectedVariants] = useState(
+		[],
+	);
 	const [selectedAddOns, setSelectedAddOns] = useState([]);
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [totalPrice, setTotalPrice] = useState(0);
@@ -168,7 +172,12 @@ export default function StoreScreen() {
 	const handleAddToCart = (product) => {
 		setSelectedProduct(product);
 		setQuantity(1); // Reset quantity
-		setSelectedVariant(product.variants[0]); // Default to the first variant
+		setSelectedVariants(
+			product.variants.map((variant, index) => ({
+				...variant,
+				quantity: index === 0 ? 1 : 0, // Set quantity of the first variant to 1, others to 0
+			})),
+		);
 		setSelectedAddOns(
 			product.addOns.map((addOn) => ({
 				...addOn,
@@ -176,11 +185,6 @@ export default function StoreScreen() {
 			})),
 		); // Initialize add-ons with quantities
 		setIsDrawerOpen(true); // Open the drawer
-	};
-
-	// Function to handle variant selection
-	const handleVariantSelect = (variant) => {
-		setSelectedVariant(variant);
 	};
 
 	// Function to handle add-on quantity change
@@ -202,19 +206,42 @@ export default function StoreScreen() {
 		);
 	};
 
-	// Function to calculate the total price
-	const calculateTotalPrice = () => {
-		if (!selectedProduct || !selectedVariant) return 0;
+	// Function to handle variant quantity change
+	const handleVariantQuantityChange = (variant, action) => {
+		setSelectedVariants((prev) =>
+			prev.map((v) =>
+				v.name === variant.name
+					? {
+							...v,
+							quantity:
+								action === 'increase'
+									? v.quantity + 1
+									: v.quantity > 0
+									? v.quantity - 1
+									: 0, // Allow quantity to go down to 0
+					  }
+					: v,
+			),
+		);
+	};
 
-		// Base price from the selected variant
-		let price = selectedVariant.price;
+	const calculateTotalPrice = () => {
+		if (!selectedProduct || selectedVariants.length === 0)
+			return 0;
+
+		// Base price from the selected variants
+		let price = selectedVariants.reduce(
+			(total, variant) =>
+				total + variant.price * variant.quantity,
+			0,
+		);
 
 		// Add the prices of selected add-ons with quantities
 		selectedAddOns.forEach((addOn) => {
 			price += addOn.price * addOn.quantity;
 		});
 
-		// Multiply by quantity
+		// Multiply by quantity of the product
 		price *= quantity;
 
 		setTotalPrice(price);
@@ -223,7 +250,17 @@ export default function StoreScreen() {
 	// Recalculate total price when selectedVariant, selectedAddOns, or quantity changes
 	useEffect(() => {
 		calculateTotalPrice();
-	}, [selectedVariant, selectedAddOns, quantity]);
+	}, [selectedVariants, selectedAddOns, quantity]);
+
+	// useEffect(() => {
+	// 	// Check if the product has variants and set the first one by default
+	// 	if (selectedProduct?.variants.length > 0) {
+	// 		const firstVariant = selectedProduct.variants[0];
+	// 		setSelectedVariants([
+	// 			{ ...firstVariant, quantity: 1 },
+	// 		]);
+	// 	}
+	// }, [selectedProduct]);
 
 	// Function to handle quantity change for product
 	const handleQuantityChange = (action) => {
@@ -244,7 +281,9 @@ export default function StoreScreen() {
 	const handleAddToCartAndStore = async () => {
 		const cartItem = {
 			product: selectedProduct.name,
-			variant: selectedVariant.name,
+			variants: selectedVariants.filter(
+				(variant) => variant.quantity > 0,
+			),
 			addOns: selectedAddOns.filter(
 				(addOn) => addOn.quantity > 0,
 			),
@@ -315,6 +354,7 @@ export default function StoreScreen() {
 				paddingTop: 40,
 				paddingHorizontal: 16,
 				flex: 1,
+				paddingBottom: 20,
 			}}
 		>
 			{/* Store Header */}
@@ -377,35 +417,53 @@ export default function StoreScreen() {
 
 					{/* Variant Selection */}
 					<Text style={styles.sectionTitle}>Variants</Text>
-					{selectedProduct?.variants.map((variant) => (
-						<TouchableOpacity
-							key={variant.name}
-							style={[
-								styles.variantButton,
-								{
-									backgroundColor:
-										selectedVariant?.name === variant.name
-											? '#27D367'
-											: '#f0f0f0',
-								},
-							]}
-							onPress={() => handleVariantSelect(variant)}
-						>
-							<Text
-								style={[
-									styles.variantButtonText,
-									{
-										color:
-											selectedVariant?.name === variant.name
-												? 'white'
-												: 'black',
-									},
-								]}
+					{selectedProduct?.variants.map(
+						(variant, index) => (
+							<View
+								key={variant.name}
+								style={styles.variantContainer}
 							>
-								{variant.name} - ₦{variant.price}
-							</Text>
-						</TouchableOpacity>
-					))}
+								<Text style={styles.addOnText}>
+									{variant.name} - ₦{variant.price}
+								</Text>
+
+								{/* Quantity Control */}
+								<View style={styles.quantityContainer}>
+									<TouchableOpacity
+										onPress={() =>
+											handleVariantQuantityChange(
+												variant,
+												'decrease',
+											)
+										}
+										style={styles.quantityButton}
+									>
+										<Text style={styles.quantityButtonText}>
+											-
+										</Text>
+									</TouchableOpacity>
+									<Text style={styles.quantityText}>
+										{selectedVariants.find(
+											(v) => v.name === variant.name,
+										)?.quantity || 0}
+									</Text>
+									<TouchableOpacity
+										onPress={() =>
+											handleVariantQuantityChange(
+												variant,
+												'increase',
+											)
+										}
+										style={styles.quantityButton}
+									>
+										<Text style={styles.quantityButtonText}>
+											+
+										</Text>
+									</TouchableOpacity>
+								</View>
+							</View>
+						),
+					)}
 
 					{/* Add-ons Selection */}
 					<Text style={styles.sectionTitle}>Add-ons</Text>
@@ -511,7 +569,7 @@ export default function StoreScreen() {
 						style={{
 							position: 'absolute',
 							top: 0,
-							right: 16,
+							right: 0,
 							zIndex: 100,
 							backgroundColor: 'white',
 							padding: 10,
@@ -656,6 +714,12 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 	},
 	addOnContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		marginBottom: 8,
+	},
+	variantContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',

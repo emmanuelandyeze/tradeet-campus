@@ -18,7 +18,7 @@ export default function Header ({
 				paddingBottom: 15,
 				paddingLeft: 20,
 				paddingRight: 20,
-				backgroundColor: '#F0F0F0',
+				backgroundColor: '#fff',
 				flexDirection: 'row',
 				zIndex: 100,
 				position: 'fixed',

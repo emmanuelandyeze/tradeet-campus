@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
 
 const { width, height } = Dimensions.get('window');
 
@@ -31,6 +32,11 @@ export default function Login() {
 
 	return (
 		<View className="flex-1 justify-center px-10">
+			<StatusBar
+				backgroundColor="#fff"
+				style="dark"
+				translucent={true}
+			/>
 			<Text className="text-4xl mb-5 font-bold">Login</Text>
 			<View className="flex flex-col gap-2 text-lg">
 				<TextInput

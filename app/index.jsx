@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,6 +39,11 @@ export default function SplashScreen() {
 
 	return (
 		<View className="flex-1 justify-center items-center bg-white">
+			<StatusBar
+				backgroundColor="#fff"
+				style="dark"
+				translucent={true}
+			/>
 			{/* Top Half: Images in a triangular format */}
 			<View
 				style={{ height: height * 0.4 }}
